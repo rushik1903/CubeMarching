@@ -6,24 +6,29 @@ public class SpawnSingleTerrain : MonoBehaviour
 {
     public float maxRadius = 50;
     public Vector3 gridWorldSize;
-    List<CubeMarching> cubeMarchingList;
     public GameObject debugObject;
+    public float pointToPointDist = 1;
 
 
 
     public float CubeScaleSize = 1;
+
+    [Header("Noise Attributes")]
     public float scaleFactorForPerlin = 0.1f;
+    [Range(-16, 16)]
     public float surfaceLevel = 0;
     public int maxSurfaceLevel = 16;
     public int minSurfaceLevel = -16;
+
+    [Header("Runtime Variables")]
     public bool drawGizmos = false;
-    public float pointToPointDist = 1;
     public bool runEveryFrame = false;
     public bool closeEdgeFaces = true;
     public bool spawnCubes = false;
     public bool drawEdges = false;
 
     Vector3 gridCenterPosition;
+    List<CubeMarching> cubeMarchingList;
 
     private void Start()
     {
@@ -33,20 +38,23 @@ public class SpawnSingleTerrain : MonoBehaviour
 
     private void SetVariables()
     {
-        if (cubeMarchingList != null && cubeMarchingList.Count > 0)
+        if(cubeMarchingList != null)
         {
-            cubeMarchingList[0].gridCenterPosition = transform.position;
-            cubeMarchingList[0].CubeScaleSize= CubeScaleSize;
-            cubeMarchingList[0].scaleFactorForPerlin= scaleFactorForPerlin;
-            cubeMarchingList[0].surfaceLevel= surfaceLevel;
-            cubeMarchingList[0].maxSurfaceLevel= maxSurfaceLevel;
-            cubeMarchingList[0].minSurfaceLevel= minSurfaceLevel;
-            cubeMarchingList[0].drawGizmos = drawGizmos;
-            cubeMarchingList[0].pointToPointDist = pointToPointDist;
-            cubeMarchingList[0].runEveryFrame= runEveryFrame;
-            cubeMarchingList[0].closeEdgeFaces= closeEdgeFaces;
-            cubeMarchingList[0].spawnCubes= spawnCubes;
-            cubeMarchingList[0].drawEdges= drawEdges;
+            for(int i=0;i<cubeMarchingList.Count;i++)
+            {
+                cubeMarchingList[i].gridCenterPosition = transform.position;
+                cubeMarchingList[i].CubeScaleSize = CubeScaleSize;
+                cubeMarchingList[i].scaleFactorForPerlin = scaleFactorForPerlin;
+                cubeMarchingList[i].surfaceLevel = surfaceLevel;
+                cubeMarchingList[i].maxSurfaceLevel = maxSurfaceLevel;
+                cubeMarchingList[i].minSurfaceLevel = minSurfaceLevel;
+                cubeMarchingList[i].drawGizmos = drawGizmos;
+                cubeMarchingList[i].pointToPointDist = pointToPointDist;
+                cubeMarchingList[i].runEveryFrame = runEveryFrame;
+                cubeMarchingList[i].closeEdgeFaces = closeEdgeFaces;
+                cubeMarchingList[i].spawnCubes = spawnCubes;
+                cubeMarchingList[i].drawEdges = drawEdges;
+            }
         }
     }
 
