@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using static UnityEngine.GraphicsBuffer;
+using Unity.VisualScripting;
 
 public class CubeMarching : Grid
 {
@@ -23,6 +24,34 @@ public class CubeMarching : Grid
         //CreateCubes();
         //MarchMesh();
     }
+
+    //Update only works if inherited from monobehavior-here not done
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.G) || runEveryFrame)
+    //    {
+    //        //SetVariables();
+    //        //Debug.Log("reseting");
+    //        //GameObject[] respawns;
+    //        //respawns = GameObject.FindGameObjectsWithTag("cube");
+
+    //        //foreach (GameObject respawn in respawns)
+    //        //{
+    //        //    GameObject.Destroy(respawn);
+    //        //}
+    //        CreateGrid();
+    //        if (spawnCubes)
+    //        {
+    //            DrawCubes();
+    //        }
+    //        else
+    //        {
+    //            CreateCubes();
+    //            MarchMesh();
+    //        }
+
+    //    }
+    //}
 
     public class HashElement
     {

@@ -5,19 +5,20 @@ using UnityEngine;
 
 public class SpawnTerrainOnMove : MonoBehaviour
 {
-    public float maxDiametre = 200;
-
-
+    public Material material;
+    public float maxRadius = 100;
     private Vector3 gridWorldSize;
+    public float _gridWorldSideLength = 50f;
     public float gridWorldSideLength
     {
         get
         {
-            return gridWorldSideLength;
+            return _gridWorldSideLength;
         }
         set
         {
-            gridWorldSize = new Vector3(gridWorldSideLength, gridWorldSideLength, gridWorldSideLength);
+            _gridWorldSideLength = value;
+            gridWorldSize = new Vector3(_gridWorldSideLength, _gridWorldSideLength, _gridWorldSideLength);
         }
     }
     public GameObject debugObject;
@@ -43,59 +44,114 @@ public class SpawnTerrainOnMove : MonoBehaviour
 
     Vector3 gridCenterPosition;
     Vector3 playerCenterPosition;
-    List<Vector3> subTerrainPositions;
-    List<CubeMarching> cubeMarchingList;
+    List<Vector3> subTerrainPositions_Rendered;
+    List<Vector3> subTerrainPositions_renderNextFrame;
+    List<Vector3> subTerrainPositions_unrenderNextFrame;
+    List<CubeMarchingEssentials> cubeMarchingEssentialsList;
+
+    struct CubeMarchingEssentials
+    {
+        public CubeMarching cubeMarching;
+        public GameObject gameObject;
+        public MeshFilter meshFilter;
+    }
 
     private void Start()
     {
-        gridWorldSideLength = 50f;
+        gridWorldSideLength = _gridWorldSideLength;
         gridCenterPosition = transform.position;
         playerCenterPosition = transform.position;
-        FindPositionsForSubTerrains_FinalShapeSphere();
-        ReNewList();
+        FindPositionsForSubTerrains_AddingAllCurrent_FinalShapeSphere();
     }
 
-    private void FindPositionsForSubTerrains_FinalShapeSphere()
+    private void FindPositionsForSubTerrains_AddingAllCurrent_FinalShapeSphere()
     {
+        subTerrainPositions_Rendered = new List<Vector3>();
         float widthOfSubTerrain = gridWorldSideLength;
-        Vector3 nonMovingCenterOfWorld = gridCenterPosition/widthOfSubTerrain;
-        nonMovingCenterOfWorld.x = Mathf.Floor(nonMovingCenterOfWorld.x);
-        nonMovingCenterOfWorld.y = Mathf.Floor(nonMovingCenterOfWorld.y);
-        nonMovingCenterOfWorld.z = Mathf.Floor(nonMovingCenterOfWorld.z);
-        nonMovingCenterOfWorld *= widthOfSubTerrain;
+        float spaceMaxRadius = Mathf.Floor(maxRadius / widthOfSubTerrain) * widthOfSubTerrain;
+        Vector3 nonMovingCenterOfWorld = FindNearestSpacePoint(gridCenterPosition);
+        Vector3 bottomLeftOfMoving = nonMovingCenterOfWorld - new Vector3(spaceMaxRadius, spaceMaxRadius, spaceMaxRadius) + new Vector3(widthOfSubTerrain/2, widthOfSubTerrain / 2, widthOfSubTerrain / 2);
 
-        for(int i = 0; i < maxDiametre / gridWorldSideLength; i++)
+        int no_of_iterations = (int)((2 * spaceMaxRadius) / widthOfSubTerrain);
+
+        for (int i = 0; i < no_of_iterations; i++)
         {
-            for (int j = 0; j < maxDiametre / gridWorldSideLength; j++)
+            for (int j = 0; j < no_of_iterations; j++)
             {
-                for (int z = 0; z < maxDiametre / gridWorldSideLength; z++)
+                for (int k = 0; k < no_of_iterations; k++)
                 {
-                    //subTerrainPositions
+                    Vector3 pos = bottomLeftOfMoving + new Vector3(i * widthOfSubTerrain, j * widthOfSubTerrain, k * widthOfSubTerrain);
+
+                    //below if statement is the only thing that changes to change the shape of final big form
+                    //currently its circle, removing if and adding all will make it a cube.
+                    //if(Vector3.Distance(pos,nonMovingCenterOfWorld) <= spaceMaxRadius)
+                    //{
+                        subTerrainPositions_Rendered.Add(pos);
+                    //}
                 }
             }
         }
+        Debug.Log("no_of_cubes : " + subTerrainPositions_Rendered.Count.ToString());
+        //foreach(Vector3 x in subTerrainPositions_Rendered)
+        //{
+        //    Debug.Log(x);
+        //}
+        RenderAtEachPointInCurrentlyRendered();
     }
 
-    private void SetVariables()
+    private void RenderAtEachPointInCurrentlyRendered()
     {
-        if (cubeMarchingList != null)
+        cubeMarchingEssentialsList = new List<CubeMarchingEssentials>();
+        foreach (Vector3 center in subTerrainPositions_Rendered)
         {
-            for (int i = 0; i < cubeMarchingList.Count; i++)
+            GameObject gameObject = new GameObject();
+            if (gameObject.GetComponent<MeshRenderer>() == null)
             {
-                cubeMarchingList[i].gridCenterPosition = transform.position;
-                cubeMarchingList[i].CubeScaleSize = CubeScaleSize;
-                cubeMarchingList[i].scaleFactorForPerlin = scaleFactorForPerlin;
-                cubeMarchingList[i].surfaceLevel = surfaceLevel;
-                cubeMarchingList[i].maxSurfaceLevel = maxSurfaceLevel;
-                cubeMarchingList[i].minSurfaceLevel = minSurfaceLevel;
-                cubeMarchingList[i].drawGizmos = drawGizmos;
-                cubeMarchingList[i].pointToPointDist = pointToPointDist;
-                cubeMarchingList[i].runEveryFrame = runEveryFrame;
-                cubeMarchingList[i].closeEdgeFaces = closeEdgeFaces;
-                cubeMarchingList[i].spawnCubes = spawnCubes;
-                cubeMarchingList[i].drawEdges = drawEdges;
+                MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
+                renderer.material= material;
             }
+            else
+            {
+                gameObject.GetComponent<MeshRenderer>().material = material;
+            }
+            //no need to instantiate, declaring it instantiates automatically
+            //GameObject.Instantiate(gameObject);
+            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
+            CubeMarching cubeMarching = new CubeMarching(meshFilter, center, gridWorldSize, debugObject);
+            SetVariablesForCubeMarching(cubeMarching);
+            CubeMarchingEssentials item;
+            item.cubeMarching = cubeMarching;
+            item.meshFilter = meshFilter;
+            item.gameObject = gameObject;
+            cubeMarchingEssentialsList.Add(item);
         }
+        Debug.Log("no_of_cubeMarchingEssentialsList : " + cubeMarchingEssentialsList.Count.ToString());
+    }
+
+    private void SetVariablesForCubeMarching(CubeMarching cubeMarching)
+    {
+        cubeMarching.CubeScaleSize = CubeScaleSize;
+        cubeMarching.scaleFactorForPerlin = scaleFactorForPerlin;
+        cubeMarching.surfaceLevel = surfaceLevel;
+        cubeMarching.maxSurfaceLevel = maxSurfaceLevel;
+        cubeMarching.minSurfaceLevel = minSurfaceLevel;
+        cubeMarching.drawGizmos = drawGizmos;
+        cubeMarching.pointToPointDist = pointToPointDist;
+        cubeMarching.runEveryFrame = runEveryFrame;
+        cubeMarching.closeEdgeFaces = closeEdgeFaces;
+        cubeMarching.spawnCubes = spawnCubes;
+        cubeMarching.drawEdges = drawEdges;
+    }
+
+    private Vector3 FindNearestSpacePoint(Vector3 point)
+    {
+        float widthOfSubTerrain = gridWorldSideLength;
+        Vector3 spacePoint = point / widthOfSubTerrain;
+        spacePoint.x = Mathf.Floor(spacePoint.x);
+        spacePoint.y = Mathf.Floor(spacePoint.y);
+        spacePoint.z = Mathf.Floor(spacePoint.z);
+        spacePoint *= widthOfSubTerrain;
+        return spacePoint;
     }
 
     void Update()
@@ -103,7 +159,6 @@ public class SpawnTerrainOnMove : MonoBehaviour
         gridCenterPosition = transform.position;
         if (Input.GetKeyDown(KeyCode.G) || runEveryFrame)
         {
-            SetVariables();
             Debug.Log("reseting");
             GameObject[] respawns;
             respawns = GameObject.FindGameObjectsWithTag("cube");
@@ -112,61 +167,68 @@ public class SpawnTerrainOnMove : MonoBehaviour
             {
                 GameObject.Destroy(respawn);
             }
-            if (cubeMarchingList != null && cubeMarchingList.Count > 0)
+            if(cubeMarchingEssentialsList!=null && cubeMarchingEssentialsList.Count > 0)
             {
-                cubeMarchingList[0].CreateGrid();
-                if (spawnCubes)
+                foreach(CubeMarchingEssentials item in cubeMarchingEssentialsList)
                 {
-                    cubeMarchingList[0].DrawCubes();
-                }
-                else
-                {
-                    cubeMarchingList[0].CreateCubes();
-                    cubeMarchingList[0].MarchMesh();
+                    Debug.Log("here");
+                    item.cubeMarching.CreateGrid();
+                    if (spawnCubes)
+                    {
+                        item.cubeMarching.DrawCubes();
+                    }
+                    else
+                    {
+                        item.cubeMarching.CreateCubes();
+                        item.cubeMarching.MarchMesh();
+                    }
                 }
             }
-
         }
     }
 
-    void ReNewList()
-    {
-        cubeMarchingList = new List<CubeMarching>();
+    //void ReNewList()
+    //{
+    //    item.cubeMarching = new List<CubeMarching>();
 
-        CubeMarching cubeMarching = new CubeMarching(gameObject.GetComponent<MeshFilter>(), transform.position, gridWorldSize, debugObject);
-        cubeMarchingList.Add(cubeMarching);
-        SetVariables();
-    }
+    //    CubeMarching cubeMarching = new CubeMarching(gameObject.GetComponent<MeshFilter>(), transform.position, gridWorldSize, debugObject);
+    //    item.cubeMarching.Add(cubeMarching);
+    //    SetVariables();
+    //}
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y, gridWorldSize.z));
+        Gizmos.DrawWireCube(transform.position, new Vector3(maxRadius * 2, maxRadius * 2, maxRadius * 2));
     }
 
     void OnDrawGizmos()
     {
-        if (cubeMarchingList != null && cubeMarchingList.Count >= 1)
+        if (cubeMarchingEssentialsList != null && cubeMarchingEssentialsList.Count >= 1)
         {
-            if (cubeMarchingList[0].gridPoints != null)
+
+            foreach(CubeMarchingEssentials item in cubeMarchingEssentialsList)
             {
-                for (int i = 0; i < cubeMarchingList[0].gridSize.x; i++)
+                if (item.cubeMarching.gridPoints != null)
                 {
-                    for (int j = 0; j < cubeMarchingList[0].gridSize.y; j++)
-                    {
-                        for (int k = 0; k < cubeMarchingList[0].gridSize.z; k++)
+                    for (int i = 0; i < item.cubeMarching.gridSize.x; i++)
+                    {   
+                        for (int j = 0; j < item.cubeMarching.gridSize.y; j++)
                         {
-                            if (cubeMarchingList[0].drawGizmos)
+                            for (int k = 0; k < item.cubeMarching.gridSize.z; k++)
                             {
-                                Gizmos.color = Color.Lerp(Color.black, Color.white, cubeMarchingList[0].gridPoints[i, j, k].normWt);
-                                if (cubeMarchingList[0].gridPoints[i, j, k].wt >= cubeMarchingList[0].surfaceLevel)
+                                if (item.cubeMarching.drawGizmos)
                                 {
-                                    Gizmos.color = Color.white;
+                                    Gizmos.color = Color.Lerp(Color.black, Color.white, item.cubeMarching.gridPoints[i, j, k].normWt);
+                                    if (item.cubeMarching.gridPoints[i, j, k].wt >= item.cubeMarching.surfaceLevel)
+                                    {
+                                        Gizmos.color = Color.white;
+                                    }
+                                    else
+                                    {
+                                        Gizmos.color = Color.black;
+                                    }
+                                    Gizmos.DrawCube(item.cubeMarching.gridPoints[i, j, k].worldPosition, new Vector3(1f, 1f, 1f));
                                 }
-                                else
-                                {
-                                    Gizmos.color = Color.black;
-                                }
-                                Gizmos.DrawCube(cubeMarchingList[0].gridPoints[i, j, k].worldPosition, new Vector3(1f, 1f, 1f));
                             }
                         }
                     }

@@ -84,7 +84,6 @@ public class SpawnSingleTerrain : MonoBehaviour
                     cubeMarchingList[0].MarchMesh();
                 }
             }
-            
         }
     }
 

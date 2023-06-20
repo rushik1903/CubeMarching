@@ -246,21 +246,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2950308042de46c4aa12265012787ac0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRadius: 50
-  subDivisionSideLength: 5
-  gridWorldSize: {x: 0, y: 0, z: 0}
-  debugObject: {fileID: 0}
-  pointToPointDist: 1
-  CubeScaleSize: 1
-  scaleFactorForPerlin: 0.1
-  surfaceLevel: 0
-  maxSurfaceLevel: 16
-  minSurfaceLevel: -16
-  drawGizmos: 0
-  runEveryFrame: 0
-  closeEdgeFaces: 1
-  spawnCubes: 0
-  drawEdges: 0
 --- !u!4 &950066454
 Transform:
   m_ObjectHideFlags: 0
@@ -429,21 +414,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1778985790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2950308042de46c4aa12265012787ac0, type: 3}
+  m_Script: {fileID: 11500000, guid: 08fc35cfe02cc2e40b4b69fc66e68c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRadius: 50
-  subDivisionSideLength: 5
+  maxRadius: 5
   gridWorldSize: {x: 50, y: 50, z: 50}
-  debugObject: {fileID: 0}
-  pointToPointDist: 1
+  debugObject: {fileID: 6921033930203654328, guid: 0be612f6396de6945b4386e97996bd79, type: 3}
+  pointToPointDist: 5
   CubeScaleSize: 1
   scaleFactorForPerlin: 0.01
   surfaceLevel: 0
   maxSurfaceLevel: 16
   minSurfaceLevel: -16
-  drawGizmos: 0
-  runEveryFrame: 0
+  drawGizmos: 1
+  runEveryFrame: 1
   closeEdgeFaces: 0
   spawnCubes: 0
   drawEdges: 0
