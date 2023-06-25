@@ -86,8 +86,6 @@ public class CubeMarching : Grid
                 }
             }
         }
-        Debug.Log("cubes grid size :");
-        Debug.Log(cubeGridSize);
     }
 
     public void MarchMesh(){
@@ -158,10 +156,10 @@ public class CubeMarching : Grid
                 }
             }
         }
-        Debug.Log("vertices:");
-        Debug.Log("Faces:");
-        Debug.Log(vertices.Count);
-        Debug.Log(faces.Count);
+        //Debug.Log("vertices:");
+        //Debug.Log("Faces:");
+        //Debug.Log(vertices.Count);
+        //Debug.Log(faces.Count);
         mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
         //mesh.uv = newUV;

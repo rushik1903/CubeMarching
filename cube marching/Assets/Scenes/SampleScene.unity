@@ -261,6 +261,65 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &957953689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 957953691}
+  - component: {fileID: 957953690}
+  m_Layer: 0
+  m_Name: terrainOnmove
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &957953690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957953689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7606097e86a33994aa2edc7017735a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 53738ed4319851f4582fd9f33c3e4e53, type: 2}
+  maxRadius: 100
+  _gridWorldSideLength: 50
+  debugObject: {fileID: 6921033930203654328, guid: 0be612f6396de6945b4386e97996bd79, type: 3}
+  pointToPointDist: 5
+  CubeScaleSize: 1
+  scaleFactorForPerlin: 0.02
+  surfaceLevel: 0
+  maxSurfaceLevel: 16
+  minSurfaceLevel: -16
+  drawGizmos: 0
+  runEveryFrame: 1
+  closeEdgeFaces: 0
+  spawnCubes: 0
+  drawEdges: 0
+--- !u!4 &957953691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957953689}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 261, y: -0.9, z: 9.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &968871691
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,7 +448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1778985791
 Transform:
   m_ObjectHideFlags: 0
@@ -427,7 +486,7 @@ MonoBehaviour:
   maxSurfaceLevel: 16
   minSurfaceLevel: -16
   drawGizmos: 1
-  runEveryFrame: 1
+  runEveryFrame: 0
   closeEdgeFaces: 0
   spawnCubes: 0
   drawEdges: 0
@@ -494,31 +553,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 51.600277
+      value: 296.6852
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 56.40458
+      value: 138.9455
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 27.37387
+      value: 199.97163
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.99217904
+      value: -0.4725642
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.09882123
+      value: -0.063089244
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.07584741
+      value: 0.8711416
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.007896015
+      value: -0.11753839
       objectReference: {fileID: 0}
     - target: {fileID: 6119529047002462926, guid: 522c7f6c43dee7549860026868216476, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

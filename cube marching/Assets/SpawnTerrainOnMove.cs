@@ -45,6 +45,7 @@ public class SpawnTerrainOnMove : MonoBehaviour
     Vector3 gridCenterPosition;
     Vector3 playerCenterPosition;
     List<Vector3> subTerrainPositions_Rendered;
+    List<Vector3> subTerrainPositions_nextFrame_Renders;
     List<Vector3> subTerrainPositions_renderNextFrame;
     List<Vector3> subTerrainPositions_unrenderNextFrame;
     List<CubeMarchingEssentials> cubeMarchingEssentialsList;
@@ -61,50 +62,16 @@ public class SpawnTerrainOnMove : MonoBehaviour
         gridWorldSideLength = _gridWorldSideLength;
         gridCenterPosition = transform.position;
         playerCenterPosition = transform.position;
-        FindPositionsForSubTerrains_AddingAllCurrent_FinalShapeSphere();
-    }
-
-    private void FindPositionsForSubTerrains_AddingAllCurrent_FinalShapeSphere()
-    {
-        subTerrainPositions_Rendered = new List<Vector3>();
-        float widthOfSubTerrain = gridWorldSideLength;
-        float spaceMaxRadius = Mathf.Floor(maxRadius / widthOfSubTerrain) * widthOfSubTerrain;
-        Vector3 nonMovingCenterOfWorld = FindNearestSpacePoint(gridCenterPosition);
-        Vector3 bottomLeftOfMoving = nonMovingCenterOfWorld - new Vector3(spaceMaxRadius, spaceMaxRadius, spaceMaxRadius) + new Vector3(widthOfSubTerrain/2, widthOfSubTerrain / 2, widthOfSubTerrain / 2);
-
-        int no_of_iterations = (int)((2 * spaceMaxRadius) / widthOfSubTerrain);
-
-        for (int i = 0; i < no_of_iterations; i++)
-        {
-            for (int j = 0; j < no_of_iterations; j++)
-            {
-                for (int k = 0; k < no_of_iterations; k++)
-                {
-                    Vector3 pos = bottomLeftOfMoving + new Vector3(i * widthOfSubTerrain, j * widthOfSubTerrain, k * widthOfSubTerrain);
-
-                    //below if statement is the only thing that changes to change the shape of final big form
-                    //currently its circle, removing if and adding all will make it a cube.
-                    //if(Vector3.Distance(pos,nonMovingCenterOfWorld) <= spaceMaxRadius)
-                    //{
-                        subTerrainPositions_Rendered.Add(pos);
-                    //}
-                }
-            }
-        }
-        Debug.Log("no_of_cubes : " + subTerrainPositions_Rendered.Count.ToString());
-        //foreach(Vector3 x in subTerrainPositions_Rendered)
-        //{
-        //    Debug.Log(x);
-        //}
-        RenderAtEachPointInCurrentlyRendered();
-    }
-
-    private void RenderAtEachPointInCurrentlyRendered()
-    {
         cubeMarchingEssentialsList = new List<CubeMarchingEssentials>();
-        foreach (Vector3 center in subTerrainPositions_Rendered)
+        //FindPositionsForSubTerrains_AddingAllCurrent_FinalShapeSphere();
+    }
+
+    private void RenderAtEachPointInRenderNextFrame()
+    {
+        foreach (Vector3 center in subTerrainPositions_renderNextFrame)
         {
             GameObject gameObject = new GameObject();
+            gameObject.transform.position = center;
             if (gameObject.GetComponent<MeshRenderer>() == null)
             {
                 MeshRenderer renderer = gameObject.AddComponent<MeshRenderer>();
@@ -124,8 +91,38 @@ public class SpawnTerrainOnMove : MonoBehaviour
             item.meshFilter = meshFilter;
             item.gameObject = gameObject;
             cubeMarchingEssentialsList.Add(item);
+            item.cubeMarching.CreateGrid();
+            if (spawnCubes)
+            {
+                item.cubeMarching.DrawCubes();
+            }
+            else
+            {
+                item.cubeMarching.CreateCubes();
+                item.cubeMarching.MarchMesh();
+            }
         }
         Debug.Log("no_of_cubeMarchingEssentialsList : " + cubeMarchingEssentialsList.Count.ToString());
+    }
+
+    private void UnRenderAtEachPointInUnRenderNextFrame()
+    {
+        int limit = cubeMarchingEssentialsList.Count;
+        for(int i=0;i< limit; i++)
+        {
+            foreach(Vector3 item in subTerrainPositions_unrenderNextFrame)
+            {
+                Debug.Log(cubeMarchingEssentialsList.Count.ToString() + "," + i.ToString());
+                if(item == cubeMarchingEssentialsList[i].gameObject.transform.position)
+                {
+                    GameObject.Destroy(cubeMarchingEssentialsList[i].gameObject);
+                    cubeMarchingEssentialsList.RemoveAt(i);
+                    i--;
+                    limit--;
+                    break;
+                }
+            }
+        }
     }
 
     private void SetVariablesForCubeMarching(CubeMarching cubeMarching)
@@ -137,7 +134,6 @@ public class SpawnTerrainOnMove : MonoBehaviour
         cubeMarching.minSurfaceLevel = minSurfaceLevel;
         cubeMarching.drawGizmos = drawGizmos;
         cubeMarching.pointToPointDist = pointToPointDist;
-        cubeMarching.runEveryFrame = runEveryFrame;
         cubeMarching.closeEdgeFaces = closeEdgeFaces;
         cubeMarching.spawnCubes = spawnCubes;
         cubeMarching.drawEdges = drawEdges;
@@ -157,6 +153,9 @@ public class SpawnTerrainOnMove : MonoBehaviour
     void Update()
     {
         gridCenterPosition = transform.position;
+
+
+
         if (Input.GetKeyDown(KeyCode.G) || runEveryFrame)
         {
             Debug.Log("reseting");
@@ -167,22 +166,82 @@ public class SpawnTerrainOnMove : MonoBehaviour
             {
                 GameObject.Destroy(respawn);
             }
-            if(cubeMarchingEssentialsList!=null && cubeMarchingEssentialsList.Count > 0)
+            FindNextFrameAllRenderCenters();
+            RenderAtEachPointInRenderNextFrame();
+            UnRenderAtEachPointInUnRenderNextFrame();
+        }
+    }
+
+    private void FindNextFrameAllRenderCenters()
+    {
+        subTerrainPositions_nextFrame_Renders = new List<Vector3>();
+        float widthOfSubTerrain = gridWorldSideLength;
+        float spaceMaxRadius = Mathf.Floor(maxRadius / widthOfSubTerrain) * widthOfSubTerrain;
+        Vector3 nonMovingCenterOfWorld = FindNearestSpacePoint(gridCenterPosition);
+        Vector3 bottomLeftOfMoving = nonMovingCenterOfWorld - new Vector3(spaceMaxRadius, spaceMaxRadius, spaceMaxRadius) + new Vector3(widthOfSubTerrain / 2, widthOfSubTerrain / 2, widthOfSubTerrain / 2);
+
+        int no_of_iterations = (int)((2 * spaceMaxRadius) / widthOfSubTerrain);
+
+        for (int i = 0; i < no_of_iterations; i++)
+        {
+            for (int j = 0; j < no_of_iterations; j++)
             {
-                foreach(CubeMarchingEssentials item in cubeMarchingEssentialsList)
+                for (int k = 0; k < no_of_iterations; k++)
                 {
-                    Debug.Log("here");
-                    item.cubeMarching.CreateGrid();
-                    if (spawnCubes)
+                    Vector3 pos = bottomLeftOfMoving + new Vector3(i * widthOfSubTerrain, j * widthOfSubTerrain, k * widthOfSubTerrain);
+
+                    //below if statement is the only thing that changes to change the shape of final big form
+                    //currently its circle, removing if and adding all will make it a cube.
+                    if (Vector3.Distance(pos, nonMovingCenterOfWorld) <= spaceMaxRadius)
                     {
-                        item.cubeMarching.DrawCubes();
-                    }
-                    else
-                    {
-                        item.cubeMarching.CreateCubes();
-                        item.cubeMarching.MarchMesh();
+                        subTerrainPositions_nextFrame_Renders.Add(pos);
                     }
                 }
+            }
+        }
+        Debug.Log("no of current all renders"+subTerrainPositions_nextFrame_Renders.Count.ToString());
+        MakeSubTerrainPositions_renderNextFrame();
+        MakeSubTerrainPositions_unrenderNextFrame();
+    }
+
+    private void MakeSubTerrainPositions_renderNextFrame()
+    {
+        subTerrainPositions_renderNextFrame = new List<Vector3>();
+        foreach(Vector3 item in subTerrainPositions_nextFrame_Renders)
+        {
+            bool repeated = false;
+            foreach(CubeMarchingEssentials item2 in cubeMarchingEssentialsList)
+            {
+                if(item == item2.gameObject.transform.position)
+                {
+                    repeated = true;
+                    break;
+                }
+            }
+            if (!repeated)
+            {
+                subTerrainPositions_renderNextFrame.Add(item);
+            }
+        }
+    }
+
+    private void MakeSubTerrainPositions_unrenderNextFrame()
+    {
+        subTerrainPositions_unrenderNextFrame = new List<Vector3>();
+        foreach (CubeMarchingEssentials item2 in cubeMarchingEssentialsList)
+        {
+            bool remove = true;
+            foreach (Vector3 item in subTerrainPositions_nextFrame_Renders)
+            {
+                if (item == item2.gameObject.transform.position)
+                {
+                    remove = false;
+                    break;
+                }
+            }
+            if (remove)
+            {
+                subTerrainPositions_unrenderNextFrame.Add(item2.gameObject.transform.position);
             }
         }
     }

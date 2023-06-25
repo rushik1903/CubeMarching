@@ -50,7 +50,6 @@ public class SpawnSingleTerrain : MonoBehaviour
                 cubeMarchingList[i].minSurfaceLevel = minSurfaceLevel;
                 cubeMarchingList[i].drawGizmos = drawGizmos;
                 cubeMarchingList[i].pointToPointDist = pointToPointDist;
-                cubeMarchingList[i].runEveryFrame = runEveryFrame;
                 cubeMarchingList[i].closeEdgeFaces = closeEdgeFaces;
                 cubeMarchingList[i].spawnCubes = spawnCubes;
                 cubeMarchingList[i].drawEdges = drawEdges;

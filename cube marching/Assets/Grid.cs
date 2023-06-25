@@ -14,7 +14,6 @@ public class Grid
     public int minSurfaceLevel = -16;
     public bool drawGizmos = false;
     public float pointToPointDist = 10;
-    public bool runEveryFrame = false;
     public bool closeEdgeFaces = true;
     public bool spawnCubes = false;
     public bool drawEdges = false;
@@ -40,7 +39,6 @@ public class Grid
         minSurfaceLevel = -16;
         drawGizmos = true;
         pointToPointDist = 1;
-        runEveryFrame = false;
         closeEdgeFaces = true;
         spawnCubes = false;
         drawEdges = false;
@@ -108,8 +106,8 @@ public class Grid
                 }
             }
         }
-        Debug.Log("grid points size");
-        Debug.Log(gridSize);
+        //Debug.Log("grid points size");
+        //Debug.Log(gridSize);
     }
 
     float TerrainNoise(Vector3 worldPosition, float bottom, float peak)
