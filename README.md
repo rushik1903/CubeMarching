@@ -1,4 +1,4 @@
-still working on GPU version
+still working on GPU version\n
 (a small prototype=> unzip > run cubeMarching . controls [WASD, mouse])
 https://drive.google.com/drive/folders/18gqevYUB-05uW0rUMyhJIgLhWqKmeWoC
 
