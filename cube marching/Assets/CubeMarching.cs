@@ -25,34 +25,6 @@ public class CubeMarching : Grid
         //MarchMesh();
     }
 
-    //Update only works if inherited from monobehavior-here not done
-    //private void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.G) || runEveryFrame)
-    //    {
-    //        //SetVariables();
-    //        //Debug.Log("reseting");
-    //        //GameObject[] respawns;
-    //        //respawns = GameObject.FindGameObjectsWithTag("cube");
-
-    //        //foreach (GameObject respawn in respawns)
-    //        //{
-    //        //    GameObject.Destroy(respawn);
-    //        //}
-    //        CreateGrid();
-    //        if (spawnCubes)
-    //        {
-    //            DrawCubes();
-    //        }
-    //        else
-    //        {
-    //            CreateCubes();
-    //            MarchMesh();
-    //        }
-
-    //    }
-    //}
-
     public class HashElement
     {
         public Vector3 worldPosition;
