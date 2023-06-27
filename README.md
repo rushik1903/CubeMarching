@@ -1,4 +1,6 @@
 still working on GPU version
+(a small prototype=> unzip > run cubeMarching . controls [WASD, mouse])
+https://drive.google.com/drive/folders/18gqevYUB-05uW0rUMyhJIgLhWqKmeWoC
 
 # CubeMarching
 Terrain generation with cube marching in unity
