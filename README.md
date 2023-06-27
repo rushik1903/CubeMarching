@@ -1,8 +1,11 @@
 still working on GPU version
 
 # CubeMarching
+
 {a small prototype=> unzip > run cubeMarching . controls [WASD, mouse]}
+
 https://drive.google.com/drive/folders/18gqevYUB-05uW0rUMyhJIgLhWqKmeWoC
+
 Terrain generation with cube marching in unity
 
 cubemarching is widely known for creating 3d surfaces from 3d scalar fields.
