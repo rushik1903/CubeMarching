@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using static UnityEngine.GraphicsBuffer;
-using Unity.VisualScripting;
 
 public class CubeMarching : Grid
 {
